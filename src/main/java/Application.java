@@ -38,6 +38,7 @@ public class Application{
 
          SparkConf conf = new SparkConf().setMaster("local[2]").setAppName("NetworkWordCount");
 
+
          JavaSparkContext sparkContext = new JavaSparkContext(conf);
 
          JavaStreamingContext streamingContext = new JavaStreamingContext(sparkContext, new Duration(1000));
@@ -67,14 +68,6 @@ public class Application{
                  LocationStrategies.PreferConsistent()
          );
 
-//         rdd.map(
-//                         consumerRecord -> {
-//                             Message m = new Message();
-//                             m.setValue(consumerRecord.value());
-//                             return m;
-//                         }
-//         );
-
 
 
          stream.foreachRDD(
@@ -91,6 +84,9 @@ public class Application{
 
                      SQLContext sqlContext = new SQLContext(sparkContext);
 
+                     sqlContext.setConf("spark.sql.parquet.compression.codec","snappy");
+
+
                      Dataset<Row> mDF = sqlContext.createDataFrame(map, Message.class);
 
 
@@ -98,8 +94,7 @@ public class Application{
 
                          mDF.show();
 
-
-                         mDF.write().format("parquet").save("blablabla-parquet");
+                         mDF.write().parquet("blablabla.parquet");
 
                      }
 
@@ -109,8 +104,6 @@ public class Application{
          );
 
          streamingContext.start();
-
-         System.out.println("Ready...");
          streamingContext.awaitTermination();
 
 //         mDF.show();
