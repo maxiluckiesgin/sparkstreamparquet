@@ -65,8 +65,6 @@ public class Application{
 
                      SQLContext sqlContext = new SQLContext(sparkContext);
 
-                     sqlContext.setConf("spark.sql.parquet.compression.codec","snappy");
-
 
                      Dataset<Row> mDF = sqlContext.createDataFrame(map, Message.class);
 
@@ -75,7 +73,7 @@ public class Application{
 
                          mDF.show();
 
-                         mDF.write().mode("override").parquet("blablabla.parquet");
+                         mDF.write().mode("overwrite").parquet("blablabla.parquet");
 
                      }
 
