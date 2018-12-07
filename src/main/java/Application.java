@@ -1,7 +1,6 @@
 import java.util.*;
 
 import org.apache.spark.sql.*;
-import org.apache.spark.sql.execution.datasources.parquet.ParquetOptions;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.apache.spark.SparkConf;
@@ -13,17 +12,18 @@ import org.apache.spark.streaming.api.java.JavaStreamingContext;
 import org.apache.spark.streaming.kafka010.ConsumerStrategies;
 import org.apache.spark.streaming.kafka010.KafkaUtils;
 import org.apache.spark.streaming.kafka010.LocationStrategies;
-import org.apache.spark.streaming.kafka010.OffsetRange;
 import scala.Tuple2;
-
 
 
 
 public class Application{
 
+
+
      public static void main(String[] args) throws InterruptedException {
 
          Map<String, Object> kafkaParams = new HashMap<>();
+
 
 
          kafkaParams.put("bootstrap.servers", "localhost:9092");
@@ -86,8 +86,6 @@ public class Application{
 
          streamingContext.start();
          streamingContext.awaitTermination();
-
-//         mDF.show();
 
      }
 
