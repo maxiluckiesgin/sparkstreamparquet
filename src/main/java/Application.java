@@ -26,7 +26,6 @@ public class Application{
          Map<String, Object> kafkaParams = new HashMap<>();
 
 
-
          kafkaParams.put("bootstrap.servers", "localhost:9092");
          kafkaParams.put("key.deserializer", StringDeserializer.class);
          kafkaParams.put("value.deserializer", StringDeserializer.class);
@@ -51,24 +50,6 @@ public class Application{
                  );
 
          stream.mapToPair(record -> new Tuple2<>(record.key(), record.value()));
-
-         // Import dependencies and create kafka params as in Create Direct Stream above
-
-         OffsetRange[] offsetRanges = {
-                 // topic, partition, inclusive starting offset, exclusive ending offset
-                 OffsetRange.create("test", 0, 0, 100),
-                 OffsetRange.create("test", 1, 0, 100)
-         };
-
-
-         JavaRDD<ConsumerRecord<String, String>> rdd = KafkaUtils.createRDD(
-                 sparkContext,
-                 kafkaParams,
-                 offsetRanges,
-                 LocationStrategies.PreferConsistent()
-         );
-
-
 
          stream.foreachRDD(
                  javaRDD ->{
