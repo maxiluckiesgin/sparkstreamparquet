@@ -1,6 +1,7 @@
 import java.util.*;
 
 import org.apache.spark.sql.*;
+import org.apache.spark.sql.execution.datasources.parquet.ParquetOptions;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.apache.spark.SparkConf;
@@ -91,15 +92,25 @@ public class Application{
                      SQLContext sqlContext = new SQLContext(sparkContext);
 
                      Dataset<Row> mDF = sqlContext.createDataFrame(map, Message.class);
-                     mDF.show();
 
-                     mDF.write().format("parquet").save("blablabla.parquet");
+
+                     if(!mDF.isEmpty()){
+
+                         mDF.show();
+
+
+                         mDF.write().format("parquet").save("blablabla-parquet");
+
+                     }
+
 
                  }
 
          );
 
          streamingContext.start();
+
+         System.out.println("Ready...");
          streamingContext.awaitTermination();
 
 //         mDF.show();
