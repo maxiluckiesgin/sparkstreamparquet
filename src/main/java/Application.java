@@ -1,10 +1,10 @@
 import java.util.*;
 
+import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.sql.*;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.apache.spark.SparkConf;
-import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.streaming.Duration;
 import org.apache.spark.streaming.api.java.JavaInputDStream;
@@ -75,7 +75,7 @@ public class Application{
 
                          mDF.show();
 
-                         mDF.write().parquet("blablabla.parquet");
+                         mDF.write().mode("override").parquet("blablabla.parquet");
 
                      }
 
