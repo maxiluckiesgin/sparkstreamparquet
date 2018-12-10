@@ -2,6 +2,8 @@ package spark;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
+import org.apache.kafka.clients.producer.Producer;
+import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.apache.spark.SparkConf;
@@ -29,11 +31,6 @@ class KafkaSpark {
 
     private JavaSparkContext sparkContext;
 
-    private JavaStreamingContext streamingContext;
-
-    private JavaInputDStream<ConsumerRecord<String, String>> stream;
-
-
 
     KafkaSpark(){
 
@@ -47,29 +44,41 @@ class KafkaSpark {
         this.kafkaParams.put("auto.offset.reset", "latest");
         this.kafkaParams.put("enable.auto.commit", false);
 
+
+
+    }
+
+
+    ProducerRecord<String, String> producerRecord(String message){
+        return new ProducerRecord<>("sparkStream", message);
+    }
+
+
+    Producer<String, String> kafkaProducer() {
+        return new org.apache.kafka.clients.producer.KafkaProducer<>(kafkaParams);
+    }
+
+    void startStream() throws InterruptedException {
+
         SparkConf conf = new SparkConf().setMaster("local[2]").setAppName("NetworkWordCount");
         this.sparkContext = new JavaSparkContext(conf);
 
-        this.streamingContext = new JavaStreamingContext(sparkContext, new Duration(1000));
+        JavaStreamingContext streamingContext = new JavaStreamingContext(sparkContext, new Duration(1000));
 
         Collection<String> topics = Collections.singletonList("sparkStream");
 
-        this.stream = KafkaUtils.createDirectStream(
+        JavaInputDStream<ConsumerRecord<String, String>> stream = KafkaUtils.createDirectStream(
                 streamingContext,
                 LocationStrategies.PreferConsistent(),
                 ConsumerStrategies.Subscribe(topics, kafkaParams)
         );
-
-    }
-
-    void startStream() throws InterruptedException {
 
         System.out.println("starting steam");
 
 
         ObjectMapper objectMapper = new ObjectMapper();
 
-        this.stream.foreachRDD(
+        stream.foreachRDD(
                 javaRDD ->{
 
                     JavaRDD<Message> map = javaRDD.map(
@@ -96,8 +105,8 @@ class KafkaSpark {
 
         );
 
-        this.streamingContext.start();
-        this.streamingContext.awaitTermination();
+        streamingContext.start();
+        streamingContext.awaitTermination();
 
     }
 
