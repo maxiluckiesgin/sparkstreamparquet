@@ -1,3 +1,4 @@
 KafkaSpark.class
 Message.class
 Application.class
+RequestHandler.class
