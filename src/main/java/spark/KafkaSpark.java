@@ -18,6 +18,8 @@ import org.apache.spark.streaming.api.java.JavaStreamingContext;
 import org.apache.spark.streaming.kafka010.ConsumerStrategies;
 import org.apache.spark.streaming.kafka010.KafkaUtils;
 import org.apache.spark.streaming.kafka010.LocationStrategies;
+import org.apache.kafka.clients.producer.ProducerRecord;
+import org.springframework.context.annotation.Bean;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -26,7 +28,7 @@ import java.util.Map;
 
 
 
-public class KafkaSpark {
+class KafkaSpark {
     private Map<String, Object> kafkaParams = new HashMap<>();
 
     private JavaSparkContext sparkContext;
@@ -34,7 +36,6 @@ public class KafkaSpark {
     private JavaStreamingContext streamingContext;
 
     private JavaInputDStream<ConsumerRecord<String, String>> stream;
-
 
 
 
@@ -67,6 +68,7 @@ public class KafkaSpark {
 
     void startStream() throws InterruptedException {
 
+        System.out.println("starting steam");
 
 
         ObjectMapper objectMapper = new ObjectMapper();
@@ -103,7 +105,4 @@ public class KafkaSpark {
 
     }
 
-    public  Producer<String, String> kafkaProducer() {
-        return new KafkaProducer<>(kafkaParams);
-    }
 }

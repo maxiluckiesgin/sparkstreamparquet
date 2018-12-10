@@ -1,9 +1,11 @@
 package spark;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/book")
+@RequestMapping("/message")
 public class RequestHandler {
 
     @GetMapping("/")
@@ -17,8 +19,10 @@ public class RequestHandler {
     }
 
     @PostMapping("/")
-    public String postBooks() {
-        return "Post book";
+    public String postBooks(HttpEntity<String> httpEntity) {
+        KafkaProducer kafkaProducer = new KafkaProducer();
+        kafkaProducer.kafkaProducer().send(kafkaProducer.producerRecord("sparkStream", httpEntity.getBody()));
+        return httpEntity.getBody();
     }
 
     @PutMapping("/{id}")
