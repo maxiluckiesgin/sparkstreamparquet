@@ -19,8 +19,8 @@ public class RequestHandler {
 
     @PostMapping("/")
     public String postBooks(HttpEntity<String> httpEntity) {
-        KafkaProducer kafkaProducer = new KafkaProducer();
-        kafkaProducer.kafkaProducer().send(kafkaProducer.producerRecord("sparkStream", httpEntity.getBody()));
+//        KafkaProducer kafkaProducer = new KafkaProducer();
+//        kafkaProducer.kafkaProducer().send(kafkaProducer.producerRecord("sparkStream", httpEntity.getBody()));
         return httpEntity.getBody();
     }
 
