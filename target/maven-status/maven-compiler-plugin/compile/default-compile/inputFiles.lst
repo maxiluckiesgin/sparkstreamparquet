@@ -1,4 +1,2 @@
-/Users/maxiluckies/Downloads/tutorials-master/sparkkafkastream/src/main/java/Message.java
-/Users/maxiluckies/Downloads/tutorials-master/sparkkafkastream/src/main/java/RequestHandler.java
-/Users/maxiluckies/Downloads/tutorials-master/sparkkafkastream/src/main/java/Application.java
-/Users/maxiluckies/Downloads/tutorials-master/sparkkafkastream/src/main/java/KafkaSpark.java
+/Users/maxiluckies/Downloads/tutorials-master/sparkkafkastreamprocess/src/main/java/spark/KafkaSpark.java
+/Users/maxiluckies/Downloads/tutorials-master/sparkkafkastreamprocess/src/main/java/spark/Application.java

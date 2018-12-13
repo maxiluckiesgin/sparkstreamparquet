@@ -1,4 +1,3 @@
-KafkaSpark.class
-Message.class
-Application.class
-RequestHandler.class
+spark/KafkaSpark$1.class
+spark/KafkaSpark.class
+spark/Application.class

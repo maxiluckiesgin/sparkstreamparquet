@@ -1,112 +1,80 @@
 package spark;
 
+import com.arangodb.spark.ArangoSpark;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.kafka.clients.consumer.ConsumerRecord;
-import org.apache.kafka.clients.producer.Producer;
-import org.apache.kafka.clients.producer.ProducerRecord;
-import org.apache.kafka.common.serialization.StringDeserializer;
-import org.apache.kafka.common.serialization.StringSerializer;
 import org.apache.spark.SparkConf;
-import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
+import org.apache.spark.api.java.function.VoidFunction2;
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
 import org.apache.spark.sql.SQLContext;
+import org.apache.spark.sql.functions;
+import org.apache.spark.sql.streaming.StreamingQuery;
+import org.apache.spark.sql.streaming.StreamingQueryException;
+import org.apache.spark.sql.types.DataTypes;
+import org.apache.spark.sql.types.StructType;
 import org.apache.spark.streaming.Duration;
-import org.apache.spark.streaming.api.java.JavaInputDStream;
 import org.apache.spark.streaming.api.java.JavaStreamingContext;
-import org.apache.spark.streaming.kafka010.ConsumerStrategies;
-import org.apache.spark.streaming.kafka010.KafkaUtils;
-import org.apache.spark.streaming.kafka010.LocationStrategies;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-
 
 
 class KafkaSpark {
-    private Map<String, Object> kafkaParams = new HashMap<>();
-
-    private JavaSparkContext sparkContext;
-
-
     KafkaSpark(){
 
-
-        this.kafkaParams.put("bootstrap.servers", "localhost:9092");
-        this.kafkaParams.put("key.deserializer", StringDeserializer.class);
-        this.kafkaParams.put("value.deserializer", StringDeserializer.class);
-        this.kafkaParams.put("key.serializer", StringSerializer.class);
-        this.kafkaParams.put("value.serializer", StringSerializer.class);
-        this.kafkaParams.put("group.id", "firstGroup");
-        this.kafkaParams.put("auto.offset.reset", "latest");
-        this.kafkaParams.put("enable.auto.commit", false);
-
-
-
     }
 
 
-    ProducerRecord<String, String> producerRecord(String message){
-        return new ProducerRecord<>("sparkStream", message);
-    }
+    void startStream() throws StreamingQueryException {
 
-
-    Producer<String, String> kafkaProducer() {
-        return new org.apache.kafka.clients.producer.KafkaProducer<>(kafkaParams);
-    }
-
-    void startStream() throws InterruptedException {
-
-        SparkConf conf = new SparkConf().setMaster("local[2]").setAppName("NetworkWordCount");
-        this.sparkContext = new JavaSparkContext(conf);
+        SparkConf conf = new SparkConf().setMaster("local[2]").setAppName("KafkaSparkStreaming")
+                .set("arangodb.hosts", "127.0.0.1:8529")
+                .set("arangodb.user", "root")
+                .set("arangodb.password", "arangodebe");
+        JavaSparkContext sparkContext = new JavaSparkContext(conf);
 
         JavaStreamingContext streamingContext = new JavaStreamingContext(sparkContext, new Duration(1000));
 
         Collection<String> topics = Collections.singletonList("sparkStream");
 
-        JavaInputDStream<ConsumerRecord<String, String>> stream = KafkaUtils.createDirectStream(
-                streamingContext,
-                LocationStrategies.PreferConsistent(),
-                ConsumerStrategies.Subscribe(topics, kafkaParams)
-        );
-
-        System.out.println("starting steam");
-
 
         ObjectMapper objectMapper = new ObjectMapper();
 
-        stream.foreachRDD(
-                javaRDD ->{
+        SQLContext sqlContext = new SQLContext(sparkContext);
 
-                    JavaRDD<Message> map = javaRDD.map(
-                            consumerRecord -> objectMapper.readValue(consumerRecord.value(),Message.class)
-                    );
-
-
-                    SQLContext sqlContext = new SQLContext(this.sparkContext);
-
-
-                    Dataset<Row> mDF = sqlContext.createDataFrame(map, Message.class);
+        Dataset<Row> df = sqlContext.readStream()
+                .format("kafka")
+                .option("kafka.bootstrap.servers", "localhost:9092")
+                .option("startingOffsets","earliest")
+                .option("subscribe", "sparkStream")
+                .load();
 
 
-                    if(!mDF.isEmpty()){
+        StructType book = new StructType()
+                .add("title", DataTypes.StringType)
+                .add("author", DataTypes.StringType)
+                .add("publisher", DataTypes.StringType);
 
-                        mDF.show();
-
-                        mDF.write().mode("overwrite").parquet("blablabla.parquet");
-
-                    }
-
-
-                }
-
+        Dataset<Row> result = df.selectExpr("CAST(value AS STRING)").select("value");
+        Dataset<Row> toBook = result.select(functions.from_json(
+                result.col("value"),book)
+                .as("book")
         );
 
-        streamingContext.start();
-        streamingContext.awaitTermination();
+        //select column
+        Dataset<Row> filteredBook = toBook.selectExpr("book.title","book.author");
+
+
+        StreamingQuery squery = filteredBook.writeStream()
+                .foreachBatch((VoidFunction2<Dataset<Row>, Long>) (rowDataset, aLong) -> {
+                    rowDataset.write()
+                            .mode("append")
+                            .parquet("hdfs://localhost/datastore/blablabla-1.parquet");
+                    ArangoSpark.save(rowDataset, "sparkDummy");
+                })
+                .start();
+        squery.awaitTermination();
 
     }
 

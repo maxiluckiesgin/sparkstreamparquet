@@ -1,20 +1,13 @@
 package spark;
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.apache.spark.sql.streaming.StreamingQueryException;
 
-@SpringBootApplication
 public class Application{
 
 
-     public static void main(String[] args) throws InterruptedException {
+     public static void main(String[] args) throws StreamingQueryException {
          spark.KafkaSpark kafkaSpark = new spark.KafkaSpark();
-
-         SpringApplication.run(Application.class, args);
-
          kafkaSpark.startStream();
-
-
      }
 
 
