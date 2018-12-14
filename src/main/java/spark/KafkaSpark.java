@@ -55,8 +55,6 @@ class KafkaSpark {
 
                         List<String> listOne = rowDataset.as(Encoders.STRING()).collectAsList();
 
-                        System.out.println(listOne.get(0));
-
                         JSONObject jsonObject = new JSONObject(listOne.get(0).trim());
 
                         Iterator<String> keys = jsonObject.keys();
