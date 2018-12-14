@@ -4,8 +4,13 @@
     <list default="true" id="67893f37-d294-4915-a9ad-fc90e6ce8f6d" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/spark/KafkaSpark.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/spark/KafkaSpark.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/spark/KafkaSpark.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/spark/KafkaSpark.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/spark-kafka-stream-1.0-SNAPSHOT.jar" beforeDir="false" afterPath="$PROJECT_DIR$/target/spark-kafka-stream-1.0-SNAPSHOT.jar" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/spark/Application.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/spark/KafkaSpark.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/maven-archiver/pom.properties" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/maven-status/maven-compiler-plugin/testCompile/default-testCompile/inputFiles.lst" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/spark-kafka-stream-1.0-SNAPSHOT.jar" beforeDir="false" />
     </list>
     <list id="396a41e1-2374-4ee3-bf24-2a878c2be4bb" name="more refractoring ok" comment="" />
     <list id="e36cf609-bc73-42ae-ac22-47224b5760ce" name="Revert &quot;more refractoring&quot;" comment="Revert &quot;more refractoring&quot;&#10;&#10;This reverts commit 9d1a0700" />
@@ -43,11 +48,11 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/main/java/spark/KafkaSpark.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="234">
-              <caret line="37" column="43" selection-start-line="37" selection-start-column="43" selection-end-line="37" selection-end-column="43" />
+            <state relative-caret-position="343">
+              <caret line="89" column="80" selection-start-line="89" selection-start-column="80" selection-end-line="89" selection-end-column="80" />
               <folding>
                 <element signature="imports" expanded="true" />
-                <element signature="e#1452#1465#0" expanded="true" />
+                <element signature="e#1728#1741#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -301,7 +306,14 @@
       <option name="project" value="LOCAL" />
       <updated>1544682478994</updated>
     </task>
-    <option name="localTasksCounter" value="8" />
+    <task id="LOCAL-00008" summary="non working using multiple write stream">
+      <created>1544768976519</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1544768976519</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
     <servers />
   </component>
   <component name="TodoView">
@@ -315,7 +327,6 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1440" height="900" extended-state="0" />
-    <editor active="true" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" sideWeight="0.49910232" visible="true" weight="0.35479257" />
       <window_info id="Structure" order="1" sideWeight="0.50089765" side_tool="true" weight="0.26037195" />
@@ -393,7 +404,8 @@
     <MESSAGE value="Revert &quot;more refractoring&quot;&#10;&#10;This reverts commit 9d1a0700" />
     <MESSAGE value="worked refractoring" />
     <MESSAGE value="worked spark kafka stream processing with structtype" />
-    <option name="LAST_COMMIT_MESSAGE" value="worked spark kafka stream processing with structtype" />
+    <MESSAGE value="non working using multiple write stream" />
+    <option name="LAST_COMMIT_MESSAGE" value="non working using multiple write stream" />
   </component>
   <component name="antWorkspaceConfiguration">
     <option name="IS_AUTOSCROLL_TO_SOURCE" value="false" />
@@ -529,11 +541,11 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/spark/KafkaSpark.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="234">
-          <caret line="37" column="43" selection-start-line="37" selection-start-column="43" selection-end-line="37" selection-end-column="43" />
+        <state relative-caret-position="343">
+          <caret line="89" column="80" selection-start-line="89" selection-start-column="80" selection-end-line="89" selection-end-column="80" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#1452#1465#0" expanded="true" />
+            <element signature="e#1728#1741#0" expanded="true" />
           </folding>
         </state>
       </provider>

@@ -1,5 +1,6 @@
 package spark;
 
+import com.arangodb.spark.ArangoSpark;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.api.java.function.VoidFunction2;
@@ -40,7 +41,6 @@ class KafkaSpark {
                 .load();
 
 
-        ArrayList<StructField> sf = new ArrayList<StructField>();
 
 
         Dataset<Row> result = df.selectExpr("CAST(value AS STRING)").select("value");
@@ -50,6 +50,8 @@ class KafkaSpark {
         StreamingQuery squery = result.writeStream()
                 .foreachBatch((VoidFunction2<Dataset<Row>, Long>) (rowDataset, aLong) -> {
                     if (!rowDataset.isEmpty()) {
+
+                        ArrayList<StructField> sf = new ArrayList<>();
 
                         List<String> listOne = rowDataset.as(Encoders.STRING()).collectAsList();
 
@@ -66,30 +68,25 @@ class KafkaSpark {
 
                         StructType book = new StructType(sf.toArray(new StructField[0]));
 
-                        Dataset<Row> result2 = df.selectExpr("CAST(value AS STRING)").select("value");
+                        Dataset<Row> bookJson = rowDataset.selectExpr("CAST(value AS STRING)").select("value");
 
-                        Dataset<Row> toBook = result2.select(functions.from_json(
-                                result2.col("value"), book)
+                        Dataset<Row> toBook = bookJson.select(functions.from_json(
+                                bookJson.col("value"), book)
                                 .as("book")
                         );
 
-                        //select column
-                        Dataset<Row> filteredBook = toBook.selectExpr("book.*");
 
-                        StreamingQuery bookQuery = filteredBook.writeStream()
-                                .foreachBatch((VoidFunction2<Dataset<Row>, Long>) (bookDataset, bookLong) -> {
-                                        System.out.println("using latest");
-                                        bookDataset.show(false);
-//                        rowDataset.write()
-//                                .mode("append")
-//                                .parquet("hdfs://localhost/datastore/blablabla-1.parquet");
-//                        ArangoSpark.save(rowDataset, "sparkDummy");
+//                        //select column
+                        Dataset<Row> filteredBook = toBook.selectExpr("book.title","book.author");
 
+                        filteredBook.show();
 
-                                })
-                                .start();
+                        ArangoSpark.save(filteredBook, "sparkDummy");
 
-                        bookQuery.awaitTermination();
+                        filteredBook.write()
+                                .mode("append")
+                                .parquet("hdfs://localhost/datastore/blablabla-2.parquet");
+
 
                     }
 
@@ -97,21 +94,7 @@ class KafkaSpark {
                 })
                 .start();
 
-//
-
-
-
-
-
-
-
-
         sqlContext.streams().awaitAnyTermination();
-
-
-
-
-
 
     }
 
